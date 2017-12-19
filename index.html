@@ -42,14 +42,32 @@ html, body, #graph {
                 r:20
               }
             }),
-            links:d3.range(0, getRandomIntInclusive(1, 8) * nb_nodes).map(function(){ 
-              return {
-                source:~~d3.randomUniform(nb_nodes)(), 
-                target:~~d3.randomUniform(nb_nodes)(),
-                distance: getRandomIntInclusive(1, 9)
-              } 
-            })        
+            links: {}
+            // d3.range(0, getRandomIntInclusive(1, 8) * nb_nodes).map(function(){ 
+            //   return {
+            //     source:~~d3.randomUniform(nb_nodes)(), 
+            //     target:~~d3.randomUniform(nb_nodes)(),
+            //     distance: getRandomIntInclusive(1, 9)
+            //   } 
+            // })        
         }
+
+        var jsonArr = [];
+        for (var i = 0; i < nb_nodes; i++) {
+            var nb_links = getRandomIntInclusive(1, 8)
+            if ( i + 9 >= nb_nodes) {
+                nb_links = ( nb_nodes - i ) - 1
+            }
+            for (var j = 1; j <= nb_links; j++) {
+                jsonArr.push({
+                    source: data.nodes[i], 
+                    target: data.nodes[j+i],
+                    distance: getRandomIntInclusive(1, 9)
+                });
+            }
+        }
+        data.links = jsonArr;
+
         console.log( data );
         
         setSize(data)
@@ -104,6 +122,13 @@ html, body, #graph {
                 .on("drag", dragged)
                 .on("end", dragended));
 
+        // console.log(document.querySelectorAll('.nodes circle'));
+        // document.querySelectorAll('.nodes circle').onmouseover = function( event ){
+        //     console.log('Hello');
+        //     console.log(event);
+        //     console.log(elem);
+        // }
+
         var node_label = svg.append("g")
             .attr("class", "node_labels")
             .selectAll("text")
@@ -117,8 +142,8 @@ html, body, #graph {
             .attr("dy", ".35em")
             .attr("fill", "white") 
 
-        var link_labels = svg.append("g")
-            .attr("class", "link_labels")
+        var link_distance = svg.append("g")
+            .attr("class", "link_distance")
             .selectAll("text")
             .data(data.links)
             .enter()
@@ -145,7 +170,7 @@ html, body, #graph {
                 .attr("x", function(d) { return d.x; })
                 .attr("y", function(d) { return d.y; });
 
-            link_labels
+            link_distance
                 .attr("x", function(d) { return d.source.x + ( (d.target.x - d.source.x) / 2 ); })
                 .attr("y", function(d) { return d.source.y + ( (d.target.y - d.source.y) / 2 ) - 10; });
         }  
