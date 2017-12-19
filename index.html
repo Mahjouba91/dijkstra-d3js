@@ -34,7 +34,7 @@ html, body, #graph {
     }
     
     function main() {
-        var nb_nodes = getRandomIntInclusive(10, 40)
+        var nb_nodes = getRandomIntInclusive(8, 20)
         var data = {
             nodes:d3.range( 0, nb_nodes ).map(function(d){ 
               return {
@@ -54,8 +54,8 @@ html, body, #graph {
 
         var jsonArr = [];
         for (var i = 0; i < nb_nodes; i++) {
-            var nb_links = getRandomIntInclusive(1, 8)
-            if ( i + 9 >= nb_nodes) {
+            var nb_links = getRandomIntInclusive(1, 4)
+            if ( i + 4 >= nb_nodes) {
                 nb_links = ( nb_nodes - i ) - 1
             }
             for (var j = 1; j <= nb_links; j++) {
