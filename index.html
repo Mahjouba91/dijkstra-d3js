@@ -27,6 +27,7 @@ html, body, #graph {
     
     main()
 
+    // Helper function to get a Random integer
     function getRandomIntInclusive(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
@@ -43,6 +44,7 @@ html, body, #graph {
               }
             }),
             links: {}
+            // Ancienne formule de populate des liens, elle avait le bémol de créer des doublons genre (n1, n3), (n1, n3) et des liens sur un seul noeud type (n1, n1)
             // d3.range(0, getRandomIntInclusive(1, 8) * nb_nodes).map(function(){ 
             //   return {
             //     source:~~d3.randomUniform(nb_nodes)(), 
@@ -54,15 +56,17 @@ html, body, #graph {
 
         var jsonArr = [];
         for (var i = 0; i < nb_nodes; i++) {
+            // Nombre de liens pour chaque noeud : Chiffre entre 1 et 4/8
             var nb_links = getRandomIntInclusive(1, 4)
             if ( i + 4 >= nb_nodes) {
+                // Si on arrive en bout de boucle, on n'empêche d'ajouter un nombre de liens supérieurs au nombre de noeuds restant
                 nb_links = ( nb_nodes - i ) - 1
             }
             for (var j = 1; j <= nb_links; j++) {
                 jsonArr.push({
-                    source: data.nodes[i], 
-                    target: data.nodes[j+i],
-                    distance: getRandomIntInclusive(1, 9)
+                    source: data.nodes[i], // On prend le noeud actuel
+                    target: data.nodes[j+i], // On fait des liens toujours vers les noeuds suivants pour plus de simplicité
+                    distance: getRandomIntInclusive(1, 9) // Distance arbitraire entre chaque noeud pour avoir un algorithme de Dirkjstra qui calcule la meilleure route
                 });
             }
         }
@@ -155,6 +159,7 @@ html, body, #graph {
             .attr("dy", ".35em")
             .attr("fill", "#000") 
 
+        // C'est cette fonction qui permet de recalculer la position de tous les éléments dès que le Canvas se met à bouger
         var ticked = function() {
             link
                 .attr("x1", function(d) { return d.source.x; })
@@ -200,43 +205,6 @@ html, body, #graph {
         }         
 
     }
-
-    var showDetails = function(d, i) {
-        var content;
-        content = '<p class="main">' + d.name + '</span></p>';
-        content += '<hr class="tooltip-hr">';
-        content += '<p class="main">' + d.artist + '</span></p>';
-        tooltip.showTooltip(content, d3.event);
-        if (link) {
-          link.attr("stroke", function(l) {
-            if (l.source === d || l.target === d) {
-              return "#555";
-            } else {
-              return "#ddd";
-            }
-          }).attr("stroke-opacity", function(l) {
-            if (l.source === d || l.target === d) {
-              return 1.0;
-            } else {
-              return 0.5;
-            }
-          });
-        }
-        node.style("stroke", function(n) {
-          if (n.searched || neighboring(d, n)) {
-            return "#555";
-          } else {
-            return strokeFor(n);
-          }
-        }).style("stroke-width", function(n) {
-          if (n.searched || neighboring(d, n)) {
-            return 2.0;
-          } else {
-            return 1.0;
-          }
-        });
-        return d3.select(this).style("stroke", "black").style("stroke-width", 2.0);
-    };
 
 }());
 </script>    
