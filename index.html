@@ -117,6 +117,19 @@ html, body, #graph {
             .attr("dy", ".35em")
             .attr("fill", "white") 
 
+        var link_labels = svg.append("g")
+            .attr("class", "link_labels")
+            .selectAll("text")
+            .data(data.links)
+            .enter()
+            .append("text")
+            .text( function (d) { return d.distance; })
+            .attr("font-family", "Arial")
+            .attr("font-size", "14px")
+            .attr("text-anchor", "middle")
+            .attr("dy", ".35em")
+            .attr("fill", "#000") 
+
         var ticked = function() {
             link
                 .attr("x1", function(d) { return d.source.x; })
@@ -130,7 +143,11 @@ html, body, #graph {
 
             node_label
                 .attr("x", function(d) { return d.x; })
-                .attr("y", function(d) { return d.y; })
+                .attr("y", function(d) { return d.y; });
+
+            link_labels
+                .attr("x", function(d) { return d.source.x + ( (d.target.x - d.source.x) / 2 ); })
+                .attr("y", function(d) { return d.source.y + ( (d.target.y - d.source.y) / 2 ) - 10; });
         }  
         
         simulation
