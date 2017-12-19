@@ -7,7 +7,7 @@
 <style>
 html, body, #graph {
     width: 1200px;
-    height: 800px;
+    height: 650px;
 }
 </style>
 </head>
@@ -35,7 +35,6 @@ html, body, #graph {
     
     function main() {
         var nb_nodes = getRandomIntInclusive(10, 40)
-        console.log( nb_nodes )
         var data = {
             nodes:d3.range( 0, nb_nodes ).map(function(d){ 
               return {
@@ -78,7 +77,7 @@ html, body, #graph {
         
         var simulation = d3.forceSimulation()
             .force("link", d3.forceLink().id(function(d) { return d.index }))
-            .force("collide",d3.forceCollide( function(d){return d.r + 8 }).iterations(16) )
+            .force("collide",d3.forceCollide( function(d){return d.r + 32 }).iterations(64) )
             .force("charge", d3.forceManyBody())
             .force("center", d3.forceCenter(chartWidth / 2, chartHeight / 2))
             .force("y", d3.forceY(0))
@@ -127,7 +126,7 @@ html, body, #graph {
 
             text
                 .attr("x", function(d) { return d.x - 10; })
-                .attr("y", function(d) { return d.y - 10; })
+                .attr("y", function(d) { return d.y; })
         }  
         
         simulation
