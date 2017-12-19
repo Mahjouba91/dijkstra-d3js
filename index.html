@@ -90,20 +90,22 @@ html, body, #graph {
             .enter()
             .append("line")
             .attr("stroke", "black")
-        
+
         var node = svg.append("g")
             .attr("class", "nodes")
             .selectAll("circle")
             .data(data.nodes)
             .enter().append("circle")
             .attr("r", function(d){  return d.r })
+            .attr("fill", "#34495e")
+            .attr("stroke", "#000")
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
 
-        var text = svg.append("g")
-            .attr("class", "labels")
+        var node_label = svg.append("g")
+            .attr("class", "node_labels")
             .selectAll("text")
             .data(data.nodes)
             .enter()
@@ -111,6 +113,8 @@ html, body, #graph {
             .text( function (d) { return d.label; })
             .attr("font-family", "Arial")
             .attr("font-size", "14px")
+            .attr("text-anchor", "middle")
+            .attr("dy", ".35em")
             .attr("fill", "white") 
 
         var ticked = function() {
@@ -124,8 +128,8 @@ html, body, #graph {
                 .attr("cx", function(d) { return d.x; })
                 .attr("cy", function(d) { return d.y; });
 
-            text
-                .attr("x", function(d) { return d.x - 10; })
+            node_label
+                .attr("x", function(d) { return d.x; })
                 .attr("y", function(d) { return d.y; })
         }  
         
