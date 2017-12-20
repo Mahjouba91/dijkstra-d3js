@@ -35,7 +35,7 @@ html, body, #graph {
     }
     
     function main() {
-        var nb_nodes = getRandomIntInclusive(8, 20)
+        var nb_nodes = getRandomIntInclusive(8, 10)
         var data = {
             nodes:d3.range( 0, nb_nodes ).map(function(d){ 
               return {
@@ -43,7 +43,8 @@ html, body, #graph {
                 r:20
               }
             }),
-            links: {}
+            links: {},
+            graph: {}
             // Ancienne formule de populate des liens, elle avait le bémol de créer des doublons genre (n1, n3), (n1, n3) et des liens sur un seul noeud type (n1, n1)
             // d3.range(0, getRandomIntInclusive(1, 8) * nb_nodes).map(function(){ 
             //   return {
@@ -54,28 +55,44 @@ html, body, #graph {
             // })        
         }
 
+        var graph = [];
         var jsonArr = [];
+        var max_links = 2;
         for (var i = 0; i < nb_nodes; i++) {
             // Nombre de liens pour chaque noeud : Chiffre entre 1 et 4/8
-            var nb_links = getRandomIntInclusive(1, 4)
-            if ( i + 4 >= nb_nodes) {
+            var nb_links = getRandomIntInclusive(1, max_links)
+            if ( i + max_links >= nb_nodes) {
                 // Si on arrive en bout de boucle, on n'empêche d'ajouter un nombre de liens supérieurs au nombre de noeuds restant
                 nb_links = ( nb_nodes - i ) - 1
             }
+
+            var label = data.nodes[i].label;
+            graph[label] = [];
             for (var j = 1; j <= nb_links; j++) {
+                var dist = getRandomIntInclusive(1, 9);
                 jsonArr.push({
                     source: data.nodes[i], // On prend le noeud actuel
                     target: data.nodes[j+i], // On fait des liens toujours vers les noeuds suivants pour plus de simplicité
-                    distance: getRandomIntInclusive(1, 9) // Distance arbitraire entre chaque noeud pour avoir un algorithme de Dirkjstra qui calcule la meilleure route
+                    distance: dist // Distance arbitraire entre chaque noeud pour avoir un algorithme de Dirkjstra qui calcule la meilleure route
                 });
+
+                graph[label][data.nodes[j+i].label] = dist;
+
             }
+            graph[label].length = nb_links;
         }
+        graph.length = nb_nodes;
+
         data.links = jsonArr;
 
         console.log( data );
         
+        console.log( graph );
+
         setSize(data)
-        drawChart(data)    
+        drawChart(data)
+
+        console.log( dijkstra(graph) );
     }
     
     function setSize(data) {
@@ -205,6 +222,75 @@ html, body, #graph {
         }         
 
     }
+
+    function lowestCostNode(costs, processed) {
+      return Object.keys(costs).reduce((lowest, node) => {
+        if (lowest === null || costs[node] < costs[lowest]) {
+          if (!processed.includes(node)) {
+            lowest = node;
+          }
+        }
+        return lowest;
+      }, null);
+    }
+
+    // function that returns the minimum cost and path to reach Finish
+    function dijkstra(graph) {
+
+      // track lowest cost to reach each node
+      console.log( graph.length );
+      console.log( graph.N0 );
+      console.log( graph.graph.length-1 );
+      var last_node_label = graph.graph.length-1;
+      console.log( last_node_label );
+      const costs = Object.assign({last_node_label: Infinity}, graph.N0);
+      console.log( costs );
+
+      // track paths
+      const parents = {finish: null};
+      for (let child in graph.start) {
+        parents[child] = 'start';
+      }
+
+      // track nodes that have already been processed
+      const processed = [];
+
+      let node = lowestCostNode(costs, processed);
+
+      while (node) {
+        let cost = costs[node];
+        let children = graph[node];
+        for (let n in children) {
+          let newCost = cost + children[n];
+          if (!costs[n]) {
+            costs[n] = newCost;
+            parents[n] = node;
+          }
+          if (costs[n] > newCost) {
+            costs[n] = newCost;
+            parents[n] = node;
+          }
+        }
+        processed.push(node);
+        node = lowestCostNode(costs, processed);
+      }
+
+      let optimalPath = ['finish'];
+      let parent = parents.finish;
+      while (parent) {
+        optimalPath.push(parent);
+        parent = parents[parent];
+      }
+      optimalPath.reverse();
+
+      const results = {
+        distance: costs.finish,
+        path: optimalPath
+      };
+
+      return results;
+    }
+
 
 }());
 </script>    
