@@ -55,8 +55,7 @@ html, body, #graph {
             // })        
         }
 
-        var graph = [];
-        var gg = {};
+        var graph = {};
         var jsonArr = [];
         var max_links = 2;
         for (var i = 0; i < nb_nodes; i++) {
@@ -68,8 +67,7 @@ html, body, #graph {
             }
 
             var label = data.nodes[i].label;
-            graph[label] = [];
-            gg[label] = {}
+            graph[label] = {}
             for (var j = 1; j <= nb_links; j++) {
                 var dist = getRandomIntInclusive(1, 9);
                 jsonArr.push({
@@ -79,26 +77,17 @@ html, body, #graph {
                 });
 
                 graph[label][data.nodes[j+i].label] = dist;
-                gg[label] = {
-                    label: data.nodes[j+i].label,
-                    distance: dist
-                };
-                // graph[i].push( {
                 //     node: data.nodes[j+i].label,
                 //     distance: dist,
                 // })
 
             }
-            graph[label].length = nb_links;
         }
-        graph.length = nb_nodes;
 
         data.links = jsonArr;
 
         console.log( data );
 
-        console.log( gg );
-        
         console.log( graph );
 
         setSize(data)
@@ -249,11 +238,13 @@ html, body, #graph {
     // function that returns the minimum cost and path to reach Finish
     function dijkstra(graph) {
 
+      var len = Object.keys(graph).length
+
       // track lowest cost to reach each node
-      console.log( graph.length );
-      var last_node_label = 'N' + ( graph.length-1 );
-      const costs = Object.assign({finish: Infinity}, graph.N0);
-      costs[last_node_label] = 'Infinity';
+      console.log( len );
+      var last_node_label = 'N' + ( len-1 );
+      console.log( last_node_label );
+      const costs = Object.assign({[last_node_label]: Infinity}, graph.N0);
       console.log( costs );
 
       // track paths
