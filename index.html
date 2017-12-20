@@ -56,6 +56,7 @@ html, body, #graph {
         }
 
         var graph = [];
+        var gg = {};
         var jsonArr = [];
         var max_links = 2;
         for (var i = 0; i < nb_nodes; i++) {
@@ -68,6 +69,7 @@ html, body, #graph {
 
             var label = data.nodes[i].label;
             graph[label] = [];
+            gg[label] = {}
             for (var j = 1; j <= nb_links; j++) {
                 var dist = getRandomIntInclusive(1, 9);
                 jsonArr.push({
@@ -77,6 +79,14 @@ html, body, #graph {
                 });
 
                 graph[label][data.nodes[j+i].label] = dist;
+                gg[label] = {
+                    label: data.nodes[j+i].label,
+                    distance: dist
+                };
+                // graph[i].push( {
+                //     node: data.nodes[j+i].label,
+                //     distance: dist,
+                // })
 
             }
             graph[label].length = nb_links;
@@ -86,6 +96,8 @@ html, body, #graph {
         data.links = jsonArr;
 
         console.log( data );
+
+        console.log( gg );
         
         console.log( graph );
 
@@ -239,11 +251,9 @@ html, body, #graph {
 
       // track lowest cost to reach each node
       console.log( graph.length );
-      console.log( graph.N0 );
-      console.log( graph.graph.length-1 );
-      var last_node_label = graph.graph.length-1;
-      console.log( last_node_label );
-      const costs = Object.assign({last_node_label: Infinity}, graph.N0);
+      var last_node_label = 'N' + ( graph.length-1 );
+      const costs = Object.assign({finish: Infinity}, graph.N0);
+      costs[last_node_label] = 'Infinity';
       console.log( costs );
 
       // track paths
