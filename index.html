@@ -15,6 +15,7 @@ html, body, #graph {
 <body>
 <div id="dijsktra">
     <h2>Algorithme de Dijkstra : </h2>
+    <p id="road"></p>
     <ul id="dijsktra_result"></ul>
     <p id="distance"></p>
 </div>
@@ -40,7 +41,7 @@ html, body, #graph {
     }
     
     function main() {
-        var nb_nodes = getRandomIntInclusive(8, 10)
+        var nb_nodes = getRandomIntInclusive(10, 20)
         var data = {
             nodes:d3.range( 0, nb_nodes ).map(function(d){ 
               return {
@@ -201,6 +202,7 @@ html, body, #graph {
         console.log( dijkstra_result );
 
         var path_len = dijkstra_result.path.length;
+        document.getElementById('road').innerHTML = 'Route : ' + dijkstra_result.path[0] + ' vers ' + dijkstra_result.path[dijkstra_result.path.length-1];
         document.getElementById( 'N0').setAttribute( "fill", "green" )
         for (var i = 0; i < dijkstra_result.path.length; i++) {
             var li_node = document.createElement("li");
