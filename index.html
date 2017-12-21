@@ -13,7 +13,12 @@ html, body, #graph {
 </head>
 
 <body>
-<div id="graph"></div>    
+<div id="dijsktra">
+    <h2>Algorithme de Dijkstra : </h2>
+    <ul id="dijsktra_result"></ul>
+    <p id="distance"></p>
+</div>
+<div id="graph"></div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 !(function(){
@@ -104,7 +109,7 @@ html, body, #graph {
             .attr("transform", "translate("+[margin.left, margin.top]+")")
     }
     
-    function drawChart(data, graph) {
+    async function drawChart(data, graph) {
         
         var simulation = d3.forceSimulation()
             .force("link", d3.forceLink().id(function(d) { return d.index }))
@@ -131,6 +136,7 @@ html, body, #graph {
             .attr("r", function(d){  return d.r })
             .attr("fill", "#34495e")
             .attr("stroke", "#000")
+            .attr("id", function(d){  return d.label })
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
@@ -195,18 +201,25 @@ html, body, #graph {
         console.log( dijkstra_result );
 
         var path_len = dijkstra_result.path.length;
-        console.log( path_len );
+        document.getElementById( 'N0').setAttribute( "fill", "green" )
         for (var i = 0; i < dijkstra_result.path.length; i++) {
-            // setTimeout(function(){ 
-                if ( i == path_len - 1 ) {
-                    break;
-                }
-                var line_elem = document.getElementById( dijkstra_result.path[i] + '-' + dijkstra_result.path[i+1] );
-                line_elem.setAttribute( "stroke", "green" );
-            // }, 1000);
+            var li_node = document.createElement("li");
+            var textnode = document.createTextNode(dijkstra_result.path[i]);
+            li_node.appendChild(textnode);
+            document.getElementById('dijsktra_result').appendChild(li_node);
+
+            await sleep(2000);
+            if ( i < path_len - 1 ) {
+                var line_elem = document.getElementById( dijkstra_result.path[i] + '-' + dijkstra_result.path[i+1] ).setAttribute( "stroke", "green" );
+                var node_elem = document.getElementById( dijkstra_result.path[i+1] ).setAttribute( "fill", "green" );
+            }
+        }
+        document.getElementById('distance').innerHTML = 'Distance : ' + dijkstra_result.distance;
+
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        
         function dragstarted(d) {
             if (!d3.event.active) simulation.alphaTarget(0.3).restart();
             d.fx = d.x;
